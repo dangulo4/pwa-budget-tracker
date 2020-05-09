@@ -15,24 +15,15 @@ app.use(express.json());
 
 app.use(express.static('public'));
 
-// routes
-app.use(require('./routes/api.js'));
-
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/budget', {
+// If deployed, use the deloyed database. Otherwise use the local mongo workout database"
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost/budget';
+mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useFindAndModify: false,
 });
 
-//Set up Mongo database.
-const databaseUrl = process.env.MONGODB_URI || 'budget';
-const collections = ['budget'];
-
-//Set reference to our database.
-const db = mongojs(databaseUrl, collections);
-
-db.on('error', (error) => {
-  console.log('Database Error:', error);
-});
+// routes
+app.use(require('./routes/api.js'));
 
 app.listen(PORT, () => {
   console.log(`App running on port ${PORT}!`);
